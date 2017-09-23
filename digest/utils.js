@@ -65,6 +65,7 @@ const tryLoadingREADME = path =>
         .then(
           READMEMarkdown => {
             directory.READMEMarkdown = READMEMarkdown
+            directory.name = getHeadingFromMarkdown(READMEMarkdown)
             return directory
           },
           error => { return directory },
@@ -72,9 +73,25 @@ const tryLoadingREADME = path =>
       )
     )
 
+const getHeadingFromMarkdown = markdown =>
+  (markdown.find(token => token.type === 'heading') || {}).text
+
 const readMarkdownFile = path =>
   readFile(path)
     .then(file => lexer(file.toString()))
+
+const extractSkillsFromREADMEMarkdowns = objects => {
+  objects.forEach(object => {
+    object.skills = extractListFromMarkdownSection(
+      object.READMEMarkdown,
+      'Skills',
+      2,
+    )
+  })
+  return objects
+}
+
+
 
 const nameToId = name =>
   name
@@ -131,15 +148,17 @@ const extractListFromMarkdownSection = (document, text, depth) => {
 
 
  module.exports = {
-  APP_ROOT,
-  mapToObjectBy,
-  convertIdsToObjects,
+  // APP_ROOT,
+  // mapToObjectBy,
+  // convertIdsToObjects,
+  // readdir,
+  // readFile,
+  // readMarkdownFile,
+  // rawTextToName,
+  // nameToId,
+  // extractListFromMarkdownSection,
   promiseMap,
-  readdir,
-  readFile,
-  readMarkdownFile,
-  rawTextToName,
-  nameToId,
-  extractListFromMarkdownSection,
   readDirectoriesWithREADMEs,
+  extractListFromMarkdownSection,
+  extractSkillsFromREADMEMarkdowns,
  }

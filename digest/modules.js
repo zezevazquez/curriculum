@@ -1,9 +1,11 @@
 const {
   readDirectoriesWithREADMEs,
+  extractSkillsFromREADMEMarkdowns,
 } = require('./utils')
 
 module.exports = () =>
   readDirectoriesWithREADMEs('/modules')
+  .then(extractSkillsFromREADMEMarkdowns)
 
 
 // const extractModuleDetails = modules =>

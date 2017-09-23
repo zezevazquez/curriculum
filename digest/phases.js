@@ -1,9 +1,23 @@
 const {
   readDirectoriesWithREADMEs,
+  extractListFromMarkdownSection,
 } = require('./utils')
 
 module.exports = () =>
   readDirectoriesWithREADMEs('/phases')
+  .then(extractModules)
+
+const extractModules = phases => {
+  phases.forEach(phase => {
+    const modules = extractListFromMarkdownSection(
+      phase.READMEMarkdown,
+      'Modules',
+      2,
+    )
+    phase.modules = modules.map(extractModuleId)
+  })
+  return phases
+}
 
 // const utils = require('./utils')
 
@@ -49,16 +63,10 @@ module.exports = () =>
 //   token.depth === 2 &&
 //   token.text === 'Modules'
 
-// const parseModuleText = (text) => {
-//   const matches = text.match(/([^\[]+?)\s*\[([^\]]+)\]\(([^\(]+)\)/)
-//   if (!matches) return
-//   let [_, icon, name, path] = matches
-//   let id = path.split('/modules/')[1]
-//   // let type = (
-//   //   icon === "🤸" ? 'practice' :
-//   //   icon === "🏋" ? 'benchmark' :
-//   //   undefined
-//   // )
-//   return id
-//   // return {id, type, name, path}
-// }
+const extractModuleId = (text) => {
+  const matches = text.match(/([^\[]+?)\s*\[([^\]]+)\]\(([^\(]+)\)/)
+  if (!matches) return
+  let [_, icon, name, path] = matches
+  let id = path.split('/modules/')[1]
+  return id
+}

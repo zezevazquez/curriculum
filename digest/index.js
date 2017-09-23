@@ -12,6 +12,17 @@ module.exports = () =>
     phases: loadPhases(),
     skills: loadSkills(),
   })
+  .then(digest => {
+    [].concat(
+      digest.phases,
+      digest.challenges,
+      digest.skills,
+      digest.modules,
+    )
+    .forEach(x => { delete x.READMEMarkdown })
+
+    return digest
+  })
 
   // Promise.all([
   //   loadChallenges(),

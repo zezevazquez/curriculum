@@ -1,14 +1,25 @@
 #!/usr/bin/env node
 
+const cli = require('commander')
 const util = require('util')
 const digest = require(__dirname+'/../digest')
 
+
+cli
+  .version('0.0.1 ')
+  .option('-C, --no-color', 'disable color')
+  .option('-j, --json', 'output as json')
+  .parse(process.argv)
+
+const { color } = cli
 const inspect = object =>
-  util.inspect(object, {
-    depth: null,
-    colors: true,
-    maxArrayLength: null,
-  })
+  cli.json
+    ? JSON.stringify(object, null, 2)
+    : util.inspect(object, {
+        depth: null,
+        colors: color,
+        maxArrayLength: null,
+      })
 
 digest()
   .then(digest => {
