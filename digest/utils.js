@@ -4,8 +4,25 @@ const lexer = require('marked').lexer
 
 const APP_ROOT = Path.resolve(__dirname, '..')
 
-const values = object =>
-  Object.keys(object).map(key => object[key])
+const promiseMap = function(map){
+  const keys = Object.keys(map)
+  const promises = keys.map(key => map[key])
+  return Promise.all(promises).then(values => {
+    const map = {}
+    keys.forEach((key, index) => {
+      map[key] = values[index]
+    })
+    return map
+  })
+}
+
+const mapToObjectBy = (records, property) => {
+  const map = {}
+  records.forEach(record => {
+    map[record[property]] = record
+  })
+  return map
+}
 
 const readdir = path =>
   fs.readdir(APP_ROOT+path).then(files =>
@@ -76,7 +93,8 @@ const extractListFromSection = (document, text, depth) => {
 
  module.exports = {
   APP_ROOT,
-  values,
+  mapToObjectBy,
+  promiseMap,
   readdir,
   readFile,
   readMarkdownFile,

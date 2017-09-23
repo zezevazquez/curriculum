@@ -1,14 +1,9 @@
-const { readdir } = require('./utils')
+const { mapToObjectBy, readdir } = require('./utils')
 
 module.exports = () =>
-  readdir('/modules').then(moduleIds =>
-    moduleIds.map(moduleId => ({id: moduleId}))
+  readdir('/challenges').then(challengeIds =>
+    challengeIds.map(challengeId => ({id: challengeId}))
   )
-
-//   loadModuleDirectoryNames()
-//     .then(convertModuleDirectoryNamesToModules)
-//     .then(extractModuleDetails)
-//     .then(indexById)
 
 // const loadModuleDirectoryNames = () =>
 //   utils.readdir('/modules')

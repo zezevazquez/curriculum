@@ -10,9 +10,9 @@
 ## Exercise
 
 Write a Node.js script called `movie-search.js` that takes a `search term` as
-the first argument. Your script should then print in the console the titles, 
-release years, and title types of the movies in the "Title" section of the 
-page that IMDB displays in response to a search for that term, parenthesizing 
+the first argument. Your script should then print in the console the titles,
+release years, and title types of the movies in the "Title" section of the
+page that IMDB displays in response to a search for that term, parenthesizing
 the years and types as IMDB does.
 
 ### Example usage
