@@ -16,6 +16,9 @@ const promiseMap = function(map){
   })
 }
 
+const convertIdsToObjects = ids =>
+  ids.map(id => ({id}))
+
 const mapToObjectBy = (records, property) => {
   const map = {}
   records.forEach(record => {
@@ -28,6 +31,27 @@ const readdir = path =>
   fs.readdir(APP_ROOT+path).then(files =>
     files.filter(file => file[0] !== '.')
   )
+
+const loadDirectoriesWithREADMEs = path => {
+  const readREADME = file =>
+    readMarkdownFile(
+      Path.join(path, file.id, 'README.md')
+    ).catch(error => {
+      console.log('ERRRRRRR', error)
+      return false
+    })
+
+  return readdir(path)
+  .then(files => files.sort())
+  .then(convertIdsToObjects)
+  .then(files =>
+    Promise.all(files.map(readREADME)).then(readmes => {
+      files.forEach((file, index) => { file.readme = readmes[index] })
+      return files.filter(file => file.readme)
+    })
+  )
+
+}
 
 const readFile = path =>
   fs.readFile(APP_ROOT+path)
@@ -49,8 +73,8 @@ const rawTextToName = rawText =>
     .replace(/^\s*/,'')
     .replace(/\s*$/,'')
 
-const extractListFromSection = (document, text, depth) => {
-  // console.log('===== extractListFromSection ====', text, depth)
+const extractListFromMarkdownSection = (document, text, depth) => {
+  // console.log('===== extractListFromMarkdownSection ====', text, depth)
   let
     items = [],
     withinSection = false,
@@ -86,7 +110,6 @@ const extractListFromSection = (document, text, depth) => {
     if (token.type === 'space') listItemText += ' '
     if (token.type === 'text') listItemText += token.text
   })
-  // console.log('ITEMSs =====', items)
   return items
 }
 
@@ -94,11 +117,13 @@ const extractListFromSection = (document, text, depth) => {
  module.exports = {
   APP_ROOT,
   mapToObjectBy,
+  convertIdsToObjects,
   promiseMap,
   readdir,
   readFile,
   readMarkdownFile,
   rawTextToName,
   nameToId,
-  extractListFromSection,
+  extractListFromMarkdownSection,
+  loadDirectoriesWithREADMEs,
  }

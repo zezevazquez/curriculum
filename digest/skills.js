@@ -1,9 +1,11 @@
-const { readdir } = require('./utils')
+const {
+  findDirectoriesWithREADMEs,
+  convertIdsToObjects,
+} = require('./utils')
 
 module.exports = () =>
-  readdir('/skills').then(moduleIds =>
-    moduleIds.map(moduleId => ({id: moduleId}))
-  )
+  findDirectoriesWithREADMEs('/skills')
+  .then(convertIdsToObjects)
 
 
 // const utils = require('./utils')
