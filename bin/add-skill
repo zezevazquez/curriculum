@@ -14,20 +14,7 @@ const usage = () => {
   process.exit(1)
 }
 
-const createDirectory = () =>
-  fs.mkdir(`${APP_ROOT}/${skill.directory}`).then(
-    _ => {
-      console.log(`Created ${skill.directory}`)
-    },
-    error => {
-      if (error.code !== 'EEXIST') throw error
-      console.log(`Already Exists ${skill.directory}`)
-    }
-  )
-
-
-const createSkillREADME = () => {
-  const markdown = (
+const createSkillREADME = skill =>
 `# ${skill.name}
 
 _This skill has no description. Please ask an SEP to add one._
@@ -43,34 +30,50 @@ _This skill has no description. Please ask an SEP to add one._
 - _This skill has no video resources. Please find and add one._
 
 `
-  )
-  const relativePath = skill.directory+'/README.md'
-  const absolutePath = `${APP_ROOT}/${relativePath}`
-  return fs.access(absolutePath).then(
+
+
+const createSkill = name => {
+  if (!name || !name.trim()) return
+  const skill = {
+    name,
+    id: nameToId(name)
+  }
+
+  const directoryRelativePath = `skills/${skill.id}`
+  const READMERelativePath    = `${directoryRelativePath}/README.md`
+  const directoryAbsolutePath = `${APP_ROOT}/${directoryRelativePath}`
+  const READMEAbsolutePath    = `${APP_ROOT}/${READMERelativePath}`
+
+  fs.mkdir(directoryAbsolutePath)
+  .then(
     _ => {
-      console.log(`Already Exists ${relativePath}`)
+      console.log(`Created ${directoryRelativePath}`)
     },
     error => {
-      if (error.code !== 'ENOENT') throw error
-      console.log(`Creating ${relativePath}`)
-      return fs.writeFile(absolutePath, markdown)
-    },
+      if (error.code !== 'EEXIST') throw error
+      console.log(`Already Exists ${directoryRelativePath}`)
+    }
   )
+  .then(_ => {
+    return fs.access(READMEAbsolutePath).then(
+      _ => {
+        console.log(`Already Exists ${READMERelativePath}`)
+      },
+      error => {
+        if (error.code !== 'ENOENT') throw error
+        console.log(`Creating ${READMERelativePath}`)
+        return fs.writeFile(READMEAbsolutePath, createSkillREADME(skill))
+      },
+    )
+  })
+  .catch(error => {
+    console.error(error)
+    process.exit(1)
+  })
 }
 
-
-
-
-
-const skill = {}
-skill.name = process.argv[2]
-if (!skill.name) usage()
-skill.id = nameToId(skill.name)
-skill.directory = `skills/${skill.id}`
-
-createDirectory()
-.then(createSkillREADME)
-.catch(error => {
-  console.error(error)
-  process.exit(1)
-})
+if (process.stdin.isTTY){
+  process.argv.slice(2).forEach(createSkill)
+}else{
+  process.stdin.pipe(require('split')()).on('data', createSkill)
+}
