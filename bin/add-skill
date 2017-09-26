@@ -1,0 +1,76 @@
+#!/usr/bin/env node
+
+const Path = require('path')
+const fs = require('fs-extra')
+const util = require('util')
+const { APP_ROOT, nameToId } = require('../digest/utils')
+
+const usage = () => {
+  console.log(
+`Usage:
+  add-skill 'Can use \`git fetch\`'
+`
+  )
+  process.exit(1)
+}
+
+const createDirectory = () =>
+  fs.mkdir(`${APP_ROOT}/${skill.directory}`).then(
+    _ => {
+      console.log(`Created ${skill.directory}`)
+    },
+    error => {
+      if (error.code !== 'EEXIST') throw error
+      console.log(`Already Exists ${skill.directory}`)
+    }
+  )
+
+
+const createSkillREADME = () => {
+  const markdown = (
+`# ${skill.name}
+
+_This skill has no description. Please ask an SEP to add one._
+
+## Resources
+
+### Reading
+
+- _This skill has no reading resources. Please find and add one._
+
+### Watching
+
+- _This skill has no video resources. Please find and add one._
+
+`
+  )
+  const relativePath = skill.directory+'/README.md'
+  const absolutePath = `${APP_ROOT}/${relativePath}`
+  return fs.access(absolutePath).then(
+    _ => {
+      console.log(`Already Exists ${relativePath}`)
+    },
+    error => {
+      if (error.code !== 'ENOENT') throw error
+      console.log(`Creating ${relativePath}`)
+      return fs.writeFile(absolutePath, markdown)
+    },
+  )
+}
+
+
+
+
+
+const skill = {}
+skill.name = process.argv[2]
+if (!skill.name) usage()
+skill.id = nameToId(skill.name)
+skill.directory = `skills/${skill.id}`
+
+createDirectory()
+.then(createSkillREADME)
+.catch(error => {
+  console.error(error)
+  process.exit(1)
+})

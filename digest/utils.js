@@ -98,6 +98,7 @@ const nameToId = name =>
     .trim()
     .replace(' & ', ' and ')
     .replace(/[^\w\d]+/g, '-')
+    .replace(/(^-+|-+$)/g, '')
 
 const extractListFromMarkdownSection = (document, text, depth) => {
   // console.log('===== extractListFromMarkdownSection ====', text, depth)
@@ -141,15 +142,7 @@ const extractListFromMarkdownSection = (document, text, depth) => {
 
 
  module.exports = {
-  // APP_ROOT,
-  // mapToObjectBy,
-  // convertIdsToObjects,
-  // readdir,
-  // readFile,
-  // readMarkdownFile,
-  // rawTextToName,
-  // nameToId,
-  // extractListFromMarkdownSection,
+  APP_ROOT,
   promiseMap,
   readDirectoriesWithREADMEs,
   extractListFromMarkdownSection,
