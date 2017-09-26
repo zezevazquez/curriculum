@@ -27,34 +27,50 @@ const mapToObjectBy = (records, property) => {
   return map
 }
 
+const readFile = path =>
+  fs.readFile(APP_ROOT+path)
+
 const readdir = path =>
   fs.readdir(APP_ROOT+path).then(files =>
     files.filter(file => file[0] !== '.')
   )
 
-const loadDirectoriesWithREADMEs = path => {
-  const readREADME = file =>
-    readMarkdownFile(
-      Path.join(path, file.id, 'README.md')
-    ).catch(error => {
-      console.log('ERRRRRRR', error)
-      return false
-    })
-
-  return readdir(path)
+/*
+ * Usage:
+ *   readDirectoriesWithREADMEs('/modules')
+ *
+ * Returns:
+ *   array of objects like:
+ *     {
+ *       id: <directory name>,
+ *       readme: <contents of readme file>,
+ *     }
+ */
+const readDirectoriesWithREADMEs = path =>
+  readdir(path)
   .then(files => files.sort())
   .then(convertIdsToObjects)
-  .then(files =>
-    Promise.all(files.map(readREADME)).then(readmes => {
-      files.forEach((file, index) => { file.readme = readmes[index] })
-      return files.filter(file => file.readme)
-    })
+  .then(tryLoadingREADME(path))
+  .then(directories =>
+    directories.filter(directory => directory.READMEMarkdown)
   )
 
-}
-
-const readFile = path =>
-  fs.readFile(APP_ROOT+path)
+const tryLoadingREADME = path =>
+  directories =>
+    Promise.all(
+      directories.map(directory =>
+        readMarkdownFile(
+          Path.join(path, directory.id, 'README.md')
+        )
+        .then(
+          READMEMarkdown => {
+            directory.READMEMarkdown = READMEMarkdown
+            return directory
+          },
+          error => { return directory },
+        )
+      )
+    )
 
 const readMarkdownFile = path =>
   readFile(path)
@@ -125,5 +141,5 @@ const extractListFromMarkdownSection = (document, text, depth) => {
   rawTextToName,
   nameToId,
   extractListFromMarkdownSection,
-  loadDirectoriesWithREADMEs,
+  readDirectoriesWithREADMEs,
  }
