@@ -9,9 +9,10 @@ cli
   .version('0.0.1 ')
   .option('-C, --no-color', 'disable color')
   .option('-j, --json', 'output as json')
+  .option('--list-skill-ids', 'list skill ids')
   .parse(process.argv)
 
-const { color } = cli
+const { color, listSkillIds } = cli
 const inspect = object =>
   cli.json
     ? JSON.stringify(object, null, 2)
@@ -23,6 +24,10 @@ const inspect = object =>
 
 digest()
   .then(digest => {
-    console.log(inspect(digest))
+    if (listSkillIds){
+      console.log(digest._skills.map(s => s.id).join("\n"))
+    }else{
+      console.log(inspect(digest))
+    }
   })
   .catch(console.error)
