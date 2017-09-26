@@ -1,12 +1,9 @@
 const {
-  findDirectoriesWithREADMEs,
-  convertIdsToObjects,
-  mapToObjectBy,
+  readDirectoriesWithREADMEs,
 } = require('./utils')
 
 module.exports = () =>
-  loadDirectoriesWithREADMEs('/challenges')
-  .then(convertIdsToObjects)
+  readDirectoriesWithREADMEs('/challenges')
 
   // // load details from README
   // .then(challenges =>

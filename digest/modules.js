@@ -1,25 +1,22 @@
 const {
-  findDirectoriesWithREADMEs,
-  convertIdsToObjects,
-  extractListFromMarkdownSection,
+  readDirectoriesWithREADMEs,
 } = require('./utils')
 
 module.exports = () =>
-  findDirectoriesWithREADMEs('/modules')
-  .then(convertIdsToObjects)
+  readDirectoriesWithREADMEs('/modules')
 
 
-const extractModuleDetails = modules =>
-  Promise.all(
-    modules.map(module =>
-      utils.readMarkdownFile(module.path+'/README.md')
-        .then(document => {
-          module.skills = extractListFromSection(document, 'Skills', 2)
-            .map(skill => skill.trim())
-          return module
-        })
-    )
-  )
+// const extractModuleDetails = modules =>
+//   Promise.all(
+//     modules.map(module =>
+//       utils.readMarkdownFile(module.path+'/README.md')
+//         .then(document => {
+//           module.skills = extractListFromSection(document, 'Skills', 2)
+//             .map(skill => skill.trim())
+//           return module
+//         })
+//     )
+//   )
 
 //   loadModuleDirectoryNames()
 //     .then(convertModuleDirectoryNamesToModules)

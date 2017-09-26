@@ -1,11 +1,9 @@
 const {
-  findDirectoriesWithREADMEs,
-  convertIdsToObjects,
+  readDirectoriesWithREADMEs,
 } = require('./utils')
 
 module.exports = () =>
-  findDirectoriesWithREADMEs('/skills')
-  .then(convertIdsToObjects)
+  readDirectoriesWithREADMEs('/skills')
 
 
 // const utils = require('./utils')
