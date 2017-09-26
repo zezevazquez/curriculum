@@ -19,13 +19,14 @@ const promiseMap = function(map){
 const convertIdsToObjects = ids =>
   ids.map(id => ({id}))
 
-const mapToObjectBy = (records, property) => {
-  const map = {}
-  records.forEach(record => {
-    map[record[property]] = record
-  })
-  return map
-}
+const mapToObjectBy = property =>
+  members => {
+    const map = {}
+    members.forEach(member => {
+      map[member[property]] = member
+    })
+    return map
+  }
 
 const readFile = path =>
   fs.readFile(APP_ROOT+path)
@@ -82,29 +83,21 @@ const readMarkdownFile = path =>
 
 const extractSkillsFromREADMEMarkdowns = objects => {
   objects.forEach(object => {
-    object.skills = extractListFromMarkdownSection(
+    const skills = extractListFromMarkdownSection(
       object.READMEMarkdown,
       'Skills',
       2,
     )
+    object.skills = skills.map(skill => skill.trim())
   })
   return objects
 }
 
-
-
 const nameToId = name =>
   name
-    .replace(/^\s*/,'')
-    .replace(/\s*$/,'')
-    .replace(/[\/ #]/g, '-')
-    .replace(/`/g, '')
-
-const rawTextToName = rawText =>
-  rawText
-    .replace(/^\s*\[\s+\]\s+/, '')
-    .replace(/^\s*/,'')
-    .replace(/\s*$/,'')
+    .trim()
+    .replace(' & ', ' and ')
+    .replace(/[^\w\d]+/g, '-')
 
 const extractListFromMarkdownSection = (document, text, depth) => {
   // console.log('===== extractListFromMarkdownSection ====', text, depth)
@@ -161,4 +154,6 @@ const extractListFromMarkdownSection = (document, text, depth) => {
   readDirectoriesWithREADMEs,
   extractListFromMarkdownSection,
   extractSkillsFromREADMEMarkdowns,
+  mapToObjectBy,
+  nameToId,
  }

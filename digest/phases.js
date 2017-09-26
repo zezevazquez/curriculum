@@ -1,11 +1,22 @@
 const {
   readDirectoriesWithREADMEs,
   extractListFromMarkdownSection,
+  mapToObjectBy,
 } = require('./utils')
 
 module.exports = () =>
   readDirectoriesWithREADMEs('/phases')
+  .then(moveIdToNumber)
   .then(extractModules)
+  .then(mapToObjectBy('number'))
+
+const moveIdToNumber = phases => {
+  phases.forEach(phase => {
+    phase.number = Number(phase.id)
+    delete phase.id
+  })
+  return phases
+}
 
 const extractModules = phases => {
   phases.forEach(phase => {
