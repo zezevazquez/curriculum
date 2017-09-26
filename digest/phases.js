@@ -20,12 +20,12 @@ const moveIdToNumber = phases => {
 
 const extractModules = phases => {
   phases.forEach(phase => {
-    const modules = extractListFromMarkdownSection(
+    const challenges = extractListFromMarkdownSection(
       phase.READMEMarkdown,
-      'Modules',
+      'Challenges',
       2,
     )
-    phase.modules = modules.map(extractModuleId)
+    phase.challenges = challenges.map(extractChallengeId)
   })
   return phases
 }
@@ -74,10 +74,7 @@ const extractModules = phases => {
 //   token.depth === 2 &&
 //   token.text === 'Modules'
 
-const extractModuleId = (text) => {
-  const matches = text.match(/([^\[]+?)\s*\[([^\]]+)\]\(([^\(]+)\)/)
-  if (!matches) return
-  let [_, icon, name, path] = matches
-  let id = path.split('/modules/')[1]
-  return id
+const extractChallengeId = (challenge) => {
+  const matches = challenge.match(/\/challenges\/([^\/]+?)\)/)
+  return matches ? matches[1] : challenge
 }
