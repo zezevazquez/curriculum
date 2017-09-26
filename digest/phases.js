@@ -7,7 +7,7 @@ const {
 module.exports = () =>
   readDirectoriesWithREADMEs('/phases')
   .then(moveIdToNumber)
-  .then(extractModules)
+  .then(extractChallenges)
   .then(mapToObjectBy('number'))
 
 const moveIdToNumber = phases => {
@@ -18,7 +18,7 @@ const moveIdToNumber = phases => {
   return phases
 }
 
-const extractModules = phases => {
+const extractChallenges = phases => {
   phases.forEach(phase => {
     const challenges = extractListFromMarkdownSection(
       phase.READMEMarkdown,
@@ -29,51 +29,6 @@ const extractModules = phases => {
   })
   return phases
 }
-
-// const utils = require('./utils')
-
-// module.exports = () =>
-//   utils.readdir('/phases')
-//     .then(phaseNumbers =>
-//       phaseNumbers.filter(phaseNumber => phaseNumber == Number(phaseNumber))
-//     )
-//     .then(phaseNumbersToPhases)
-//     .then(loadDetails)
-//     .then(indexByNumber)
-
-// const phaseNumbersToPhases = numbers =>
-//   numbers.map(number => (
-//     {
-//       number: Number.parseInt(number),
-//       path: `/phases/${number}`,
-//     }
-//   ))
-
-// const loadDetails = phases =>
-//   Promise.all(
-//     phases.map(phase =>
-//       utils.readMarkdownFile(`${phase.path}/README.md`)
-//       .then(document => {
-//         phase.modules =
-//           utils.extractListFromSection(document, 'Modules', 2)
-//           .map(parseModuleText)
-//         return document
-//       })
-//       .then(_ => phase)
-//     )
-//   )
-
-// const indexByNumber = phases =>
-//   phases.reduce((index, phase) => {
-//     index[phase.number] = phase
-//     return index
-//   }, {})
-
-// const isModulesHeading = token =>
-//   token.type === 'heading' &&
-//   token.depth === 2 &&
-//   token.text === 'Modules'
-
 const extractChallengeId = (challenge) => {
   const matches = challenge.match(/\/challenges\/([^\/]+?)\)/)
   return matches ? matches[1] : challenge
