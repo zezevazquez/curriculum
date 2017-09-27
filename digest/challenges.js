@@ -1,12 +1,14 @@
 const {
   readDirectoriesWithREADMEs,
   extractSkillsFromREADMEMarkdowns,
+  removeREADMEMarkdown,
   mapToObjectBy,
 } = require('./utils')
 
 module.exports = () =>
   readDirectoriesWithREADMEs('/challenges')
   .then(extractSkillsFromREADMEMarkdowns)
+  .then(removeREADMEMarkdown)
   .then(mapToObjectBy('id'))
 
   // // load details from README

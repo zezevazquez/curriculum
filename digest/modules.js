@@ -1,12 +1,14 @@
 const {
   readDirectoriesWithREADMEs,
   extractSkillsFromREADMEMarkdowns,
+  removeREADMEMarkdown,
   mapToObjectBy,
 } = require('./utils')
 
 module.exports = () =>
   readDirectoriesWithREADMEs('/modules')
   .then(extractSkillsFromREADMEMarkdowns)
+  .then(removeREADMEMarkdown)
   .then(mapToObjectBy('id'))
 
 

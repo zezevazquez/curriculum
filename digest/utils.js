@@ -28,6 +28,14 @@ const mapToObjectBy = property =>
     return map
   }
 
+const nameToId = name =>
+  name
+    .trim()
+    .replace(' & ', ' and ')
+    .replace(/[^\w\d]+/g, '-')
+    .replace(/(^-+|-+$)/g, '')
+
+
 const readFile = path =>
   fs.readFile(APP_ROOT+path)
 
@@ -74,6 +82,13 @@ const tryLoadingREADME = path =>
       )
     )
 
+const removeREADMEMarkdown = objects => {
+  objects.forEach(object => {
+    delete object.READMEMarkdown
+  })
+  return objects
+}
+
 const getHeadingFromMarkdown = markdown =>
   (markdown.find(token => token.type === 'heading') || {}).text
 
@@ -88,17 +103,10 @@ const extractSkillsFromREADMEMarkdowns = objects => {
       'Skills',
       2,
     )
-    object.skills = skills.map(skill => skill.trim())
+    object.skills = skills.map(nameToId)
   })
   return objects
 }
-
-const nameToId = name =>
-  name
-    .trim()
-    .replace(' & ', ' and ')
-    .replace(/[^\w\d]+/g, '-')
-    .replace(/(^-+|-+$)/g, '')
 
 const extractListFromMarkdownSection = (document, text, depth) => {
   // console.log('===== extractListFromMarkdownSection ====', text, depth)
@@ -149,4 +157,5 @@ const extractListFromMarkdownSection = (document, text, depth) => {
   extractSkillsFromREADMEMarkdowns,
   mapToObjectBy,
   nameToId,
+  removeREADMEMarkdown,
  }

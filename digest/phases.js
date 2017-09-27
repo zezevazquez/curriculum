@@ -1,6 +1,7 @@
 const {
   readDirectoriesWithREADMEs,
   extractListFromMarkdownSection,
+  removeREADMEMarkdown,
   mapToObjectBy,
 } = require('./utils')
 
@@ -8,6 +9,7 @@ module.exports = () =>
   readDirectoriesWithREADMEs('/phases')
   .then(moveIdToNumber)
   .then(extractChallenges)
+  .then(removeREADMEMarkdown)
   .then(mapToObjectBy('number'))
 
 const moveIdToNumber = phases => {
