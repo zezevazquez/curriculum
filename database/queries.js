@@ -38,9 +38,14 @@ const hashChecksByLabel = checks => {
   return checkedMap
 }
 
+const getAllModuleFeedback = (moduleName) =>
+  knex
+    .select('*')
+    .from('module_feedback')
+    .where('module_name', moduleName)
+
 module.exports = {
   getChecksForUserAndLabels,
   getCheckLogsForUsers,
+  getAllModuleFeedback
 }
-
-

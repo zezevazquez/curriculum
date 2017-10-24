@@ -122,6 +122,7 @@ module.exports = app => {
       const absoluteFilePath = path.resolve(__dirname, '..', '.'+relativeFilePath)
       fs.readFile(absoluteFilePath)
         .then(file => {
+
           response.renderMarkdown(file.toString())
         })
         .catch(error => {
@@ -142,9 +143,12 @@ module.exports = app => {
 
         const title = getTitleFromHTML(content)
 
+        const titleUrlPath = response.path.replace(/\s/, '-')
+
         const file = {
           content,
           title,
+          feedbackUrl: titleUrlPath + 'feedback',
           sourceUrl: 'https://github.com/GuildCrafts/curriculum/blob/master'+path,
           editeUrl: 'https://github.com/GuildCrafts/curriculum/edit/master'+path,
         }
